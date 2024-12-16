@@ -263,8 +263,13 @@ console.log(checkAndPreventExtensions({ a: 1, b: 2 })); // Виведе false
  */
 function sealAndCheck(obj) {
   // Перевіряємо, чи вхідний параметр є об'єктом, якщо ні, повертаємо false
+  if (typeof obj !== "object" || obj== null) {
+    return false
+  }
   // Запечатовуємо об'єкт
+  Object.seal(obj);
   // Перевіряємо, чи запечатаний об'єкт, та повертаємо результат
+  return Object.isSealed(obj);
 }
 console.log("Завдання: 9 ==============================");
 console.log(sealAndCheck({ a: 1, b: 2 })); // Виведе true
@@ -285,6 +290,10 @@ console.log(sealAndCheck({ a: 1, b: 2 })); // Виведе true
 
 // Розпочинаємо визначення функції.
 function checkOwnership(obj1, obj2, key) {
+  if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+    return obj1[key] === obj2[key];
+  }
+  return false;
   // Використовуємо метод hasOwnProperty() для перевірки наявності ключа в обох об'єктах.
   // Якщо обидва об'єкти мають вказаний ключ повертаємо результат порівняння їх значень.
   // Якщо значення однакові, повернемо true.
@@ -308,9 +317,20 @@ console.log(checkOwnership({ a: 1, b: 2, c: 3 }, { a: 1, b: 2, c: 4 }, "a")); //
  */
 function getObjectValuesSum(obj) {
   // Перевірка, чи є аргумент об'єктом,якщо ні повертаємо 0
+  if (typeof obj !== "object" || obj === null) {
+    return 0;
+  }
   // Отримуємо всі значення об'єкта
+  const values = Object.values(obj);
+  if (!Array.isArray(values)) {
+    return 0;
+  }
   // Обчислюємо суму значень
+  const sum = values.reduce((acc,value) => {
+    return typeof value === "number" ? acc + value : acc;
+  }, 0);
   // Повертаємо суму
+  return sum;
 }
 
 console.log("Завдання: 11 ==============================");
@@ -328,11 +348,23 @@ console.log(getObjectValuesSum({ a: 1, b: 2, c: 3 })); // Виведе 6
  */
 function convertArrayToObj(arr) {
   // Перевіряємо, чи вхідний параметр є масивом, якщо ні, повертаємо пустий об'єкт
+  if (!Array.isArray(arr)) {
+    return {};
+  }
   // Створюємо пустий об'єкт який записуємо в змінну
+  const tempObj = {};
   // Проходимося по кожному підмасиву в масиві за допопмогою циклу for, лічильник від нуля до довжини масиву
+  for (const [key, value] of arr) {
+
+    if (tempObj.hasOwnProperty(key)) {
+      console.log(`У масиві є дубльований ключ: ${key}`);
+    }
   // Розпаковуємо підмасив за допомогою деструктурізації на окремі змінні для ключа та значення
   // Перевіряємо, чи існує вже ключ в об'єкті,якщо так виводимо в консоль повідомлення `У масиві є дубльований ключ: ${key}`
   // Додаємо ключ та значення до об'єкта
+  tempObj[key] = value;
+}
+return tempObj;
   // Застосовуємо метод Object.fromEntries() для створення об'єкта
 }
 
